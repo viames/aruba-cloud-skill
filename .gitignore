@@ -1,0 +1,10 @@
+/bin/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+config.yaml
+*.csv
+inventory*.json
+.venv/
+.DS_Store

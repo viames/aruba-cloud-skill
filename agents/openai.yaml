@@ -1,0 +1,4 @@
+interface:
+  display_name: "Aruba Cloud"
+  short_description: "Gestione Aruba Cloud con CLI e SDK ufficiali"
+  default_prompt: "Usa $aruba-cloud per verificare e gestire le mie risorse Aruba Cloud."

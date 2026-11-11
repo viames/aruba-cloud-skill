@@ -1,0 +1,24 @@
+{
+  "cli_version": "1.0.0",
+  "sdk_dependency": "github.com/Arubacloud/sdk-go v1.0.4",
+  "source": "https://github.com/Arubacloud/acloud-cli/releases/tag/v1.0.0",
+  "verified_on": "2026-11-11",
+  "artifacts": {
+    "darwin_arm64": {
+      "filename": "acloud_1.0.0_darwin_arm64.tar.gz",
+      "sha256": "ddb33335b0bdd6ae1515ffe8ce4b5361bf654ae23a0c852fdb05dbceaf46ee95"
+    },
+    "darwin_amd64": {
+      "filename": "acloud_1.0.0_darwin_amd64.tar.gz",
+      "sha256": "b38260f8991e10dd9002a5d88cf05198210d778556aa24972e5cc657ddb4ff5d"
+    },
+    "linux_arm64": {
+      "filename": "acloud_1.0.0_linux_arm64.tar.gz",
+      "sha256": "edb80caba410378248ef7e5fa93008649da3b3313f96e67e1e65a07ae46e6103"
+    },
+    "linux_amd64": {
+      "filename": "acloud_1.0.0_linux_amd64.tar.gz",
+      "sha256": "da59431f1b21f432ae92d3198f0db10d55a6dcc433395614178e8398a44d65ca"
+    }
+  }
+}
