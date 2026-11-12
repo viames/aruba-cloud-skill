@@ -1,0 +1,11 @@
+ARUBA CLOUD / LOCAL DEMO
+Synthetic data. Official CLI. No Aruba account or cloud API calls.
+
+Project                      Servers     Volumes        VPCs Elastic IPs   Databases  Kubernetes  Registries
+------------------------------------------------------------------------------------------------------------
+Production (demo)                  3           4           1           2           1           1           1
+Staging (demo)                     1           1           1           1           0           0           0
+
+Complete: yes | Projects: 2 | Resources: 17 | Errors: 0
+Report created with private permissions; temporary demo files removed on exit.
+This verifies the local workflow, not live Aruba access or compatibility.

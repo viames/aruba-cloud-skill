@@ -23,6 +23,10 @@ Ometti `--profile` solo se il profilo attivo è quello voluto. Usa `--project-id
 
 Il report contiene metadati di infrastruttura; mantienilo locale. L'helper non restituisce corpi degli errori né token. Non usare `--debug` con credenziali reali: la CLI avvisa che può esporre segreti negli header.
 
+Presenta il risultato con un breve riepilogo per progetto e famiglia, indicando ambito selezionato, completezza ed eventuali codici diagnostici. Mantieni distinti conteggi verificati e dati non accessibili; non ricavare costi o risorse inutilizzate dal solo inventario. Fornisci il percorso del report privato per approfondire.
+
+Se l'utente vuole provare il flusso senza un account, esegui `python3 scripts/demo.py`: usa CLI e helper reali contro un server locale con dati sintetici e configurazione temporanea. Dichiara che è una dimostrazione e che non verifica autenticazione o compatibilità con Aruba in produzione.
+
 ## Modifiche alle risorse
 
 Installare la skill non autorizza modifiche al cloud. Esegui le modifiche richieste dall'utente nello scopo già autorizzato, senza una seconda conferma. Per risorse con costo, cancellazioni, spegnimenti o variazioni di rete, identifica account, progetto, ID, dipendenze ed effetto atteso prima dell'esecuzione; chiedi chiarimenti solo se dati o autorizzazione mancano.

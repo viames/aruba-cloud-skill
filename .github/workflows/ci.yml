@@ -19,3 +19,5 @@ jobs:
         run: python3 scripts/inventory.py doctor
       - name: Test real CLI against local fixtures
         run: python3 scripts/test_inventory.py
+      - name: Run account-free local demo
+        run: python3 scripts/demo.py

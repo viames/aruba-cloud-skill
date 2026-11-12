@@ -1,4 +1,4 @@
 interface:
   display_name: "Aruba Cloud"
-  short_description: "Gestione Aruba Cloud con CLI e SDK ufficiali"
-  default_prompt: "Usa $aruba-cloud per verificare e gestire le mie risorse Aruba Cloud."
+  short_description: "Inventario e gestione Aruba Cloud da Codex"
+  default_prompt: "Usa $aruba-cloud per inventariare le mie risorse per progetto e segnalare eventuali dati non accessibili."
