@@ -113,13 +113,23 @@ def collect(domain, resource, empty, profile, project, limit, max_pages, timeout
 
 def inventory(args):
     report = {
-        'schema_version': 1,
+        'schema_version': 2,
         'started_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'source': 'Aruba CMP via acloud 1.0.0',
         'profile': args.profile or os.environ.get('ACLOUD_PROFILE') or '(CLI active/default)',
         'credential_env_override': bool(os.environ.get('ACLOUD_CLIENT_ID') or
                                         os.environ.get('ACLOUD_CLIENT_SECRET')),
         'selected_kinds': args.kinds.split(','),
+        'scope': {
+            'account_label': args.account_label,
+            'project_id': args.project_id,
+            # An endpoint hint, not proof of the effective account or configuration.
+            # Hash the hints so URL credentials/query strings cannot enter reports.
+            'endpoint_fingerprint': hashlib.sha256(json.dumps([
+                os.environ.get('ACLOUD_BASE_URL'),
+                os.environ.get('ACLOUD_TOKEN_ISSUER_URL'),
+            ]).encode()).hexdigest(),
+        },
         'complete': True, 'projects': [], 'errors': [],
     }
     try:
@@ -163,6 +173,7 @@ def main():
     sub.add_parser('doctor', help='Offline verification; never prints secrets')
     inv = sub.add_parser('inventory', help='Read-only paginated inventory')
     inv.add_argument('--profile')
+    inv.add_argument('--account-label', help='Stable non-secret label for one account; needed for offline diffs')
     inv.add_argument('--project-id')
     inv.add_argument('--kinds', default=','.join(KINDS))
     inv.add_argument('--page-size', type=int, default=50)
@@ -186,6 +197,13 @@ def main():
             parser.error('page size must be 1..1000; max pages and timeout must be positive')
         if any(k not in KINDS for k in args.kinds.split(',')):
             parser.error('supported kinds: ' + ','.join(KINDS))
+        if len(set(args.kinds.split(','))) != len(args.kinds.split(',')):
+            parser.error('resource kinds must be unique')
+        if args.account_label is not None and (not args.account_label.strip() or
+                len(args.account_label) > 128 or not args.account_label.isprintable()):
+            parser.error('account label must contain 1..128 printable characters')
+        if args.project_id is not None and not args.project_id.strip():
+            parser.error('project id must not be empty')
         if Path(args.output).exists() or Path(args.output).is_symlink():
             parser.error('output already exists; choose a new path')
         return inventory(args)

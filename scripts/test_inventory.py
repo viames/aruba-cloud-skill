@@ -79,6 +79,24 @@ class IntegrationTests(unittest.TestCase):
         self.mode='empty';r,d,_=self.run_inventory(['--project-id','project-a'])
         self.assertEqual(r.returncode,0,r.stderr)
         self.assertEqual(d['projects'][0]['resources']['servers']['count'],0)
+    def test_labeled_scope_is_recorded_without_endpoint_values(self):
+        r,d,_=self.run_inventory(['--project-id','project-a','--account-label','example-account'])
+        self.assertEqual(r.returncode,0,r.stderr)
+        self.assertEqual(d['schema_version'],2)
+        self.assertEqual(d['scope']['account_label'],'example-account')
+        self.assertEqual(d['scope']['project_id'],'project-a')
+        self.assertEqual(len(d['scope']['endpoint_fingerprint']),64)
+        self.assertNotIn(self.env['ACLOUD_BASE_URL'],json.dumps(d))
+    def test_invalid_scope_flags_fail_before_any_api_call(self):
+        out=Path(self.tmp.name)/'duplicate.json'
+        for flags in (['--kinds','servers,servers'], ['--project-id',''],
+                      ['--account-label',' '], ['--account-label','bad\nlabel'],
+                      ['--account-label','a'*129]):
+            with self.subTest(flags=flags):
+                r=subprocess.run(['python3',str(HELPER),'inventory',*flags,
+                                  '--output',str(out)],env=self.env,capture_output=True,text=True)
+                self.assertEqual(r.returncode,2)
+                self.assertFalse(out.exists());self.assertEqual(self.requests,[])
     def test_permission_error_is_not_zero_and_no_body_leak(self):
         self.mode='denied';r,d,_=self.run_inventory(['--project-id','project-a'])
         self.assertEqual(r.returncode,2);self.assertFalse(d['complete'])

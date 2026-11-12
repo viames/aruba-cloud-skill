@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Run the real inventory helper against synthetic localhost data; no Aruba account."""
+import argparse
 import json
 import os
 from pathlib import Path
@@ -7,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import reports
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -55,11 +57,16 @@ class DemoHandler(BaseHTTPRequestHandler):
               and parts[1] in COUNTS and parts[4] in FAMILIES):
             index = list(FAMILIES).index(parts[4])
             kind = FAMILIES[parts[4]][0]
+            count = COUNTS[parts[1]][index]
+            if self.server.phase == 'after' and parts[1] == 'demo-production':
+                count += 1 if kind == 'servers' else -1 if kind == 'volumes' else 0
             values = [
                 {'metadata': {'id': f'{parts[1]}-{kind}-{n + 1}',
                               'name': f'demo-{kind}-{n + 1}'}}
-                for n in range(COUNTS[parts[1]][index])
+                for n in range(count)
             ]
+            if self.server.phase == 'after' and parts[1] == 'demo-production' and kind == 'servers':
+                values[0]['metadata']['name'] = 'demo-servers-1-renamed'
         else:
             return self.reply({}, 404)
         query = parse_qs(parsed.query)
@@ -69,6 +76,11 @@ class DemoHandler(BaseHTTPRequestHandler):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output-dir', help='Retain synthetic JSON/Markdown in a NEW private directory')
+    args = parser.parse_args()
+    if args.output_dir and (Path(args.output_dir).exists() or Path(args.output_dir).is_symlink()):
+        parser.error('output directory already exists; choose a new path')
     print('ARUBA CLOUD / LOCAL DEMO', flush=True)
     print('Synthetic data. Official CLI. No Aruba account or cloud API calls.\n', flush=True)
     if not (ROOT / 'bin' / 'acloud').is_file():
@@ -76,6 +88,7 @@ def main():
         return 2
     with tempfile.TemporaryDirectory(prefix='aruba-cloud-demo-') as folder:
         server = ThreadingHTTPServer(('127.0.0.1', 0), DemoHandler)
+        server.phase = 'before'
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         try:
@@ -86,16 +99,18 @@ def main():
                        ACLOUD_BASE_URL=url, ACLOUD_TOKEN_ISSUER_URL=url + '/token',
                        XDG_CONFIG_HOME=folder,
                        NO_PROXY='127.0.0.1,localhost', no_proxy='127.0.0.1,localhost')
-            output = Path(folder) / 'demo.json'
-            run = subprocess.run(
-                [sys.executable, str(ROOT / 'scripts' / 'inventory.py'), 'inventory',
-                 '--page-size', '2', '--output', str(output)],
-                env=env, capture_output=True, text=True, timeout=60,
-            )
-            if run.returncode or not output.is_file():
-                print('Local demo failed. Run the fixture tests for diagnostics.', file=sys.stderr)
-                return 2
-            report = json.loads(output.read_text())
+            for phase in ('before', 'after'):
+                server.phase = phase
+                output = Path(folder) / f'{phase}.json'
+                run = subprocess.run(
+                    [sys.executable, str(ROOT / 'scripts' / 'inventory.py'), 'inventory',
+                     '--account-label', 'synthetic-demo', '--page-size', '2', '--output', str(output)],
+                    env=env, capture_output=True, text=True, timeout=60,
+                )
+                if run.returncode or not output.is_file():
+                    print('Local demo failed. Run the fixture tests for diagnostics.', file=sys.stderr)
+                    return 2
+            report = reports.read_inventory(Path(folder) / 'before.json')
             if not report['complete'] or len(report['projects']) != len(PROJECTS):
                 print('Local demo returned an incomplete inventory.', file=sys.stderr)
                 return 2
@@ -109,7 +124,30 @@ def main():
                 print(f'{name:<24}' + ''.join(f'{count:>12}' for count in counts))
                 totals = [a + b for a, b in zip(totals, counts)]
             print(f'\nComplete: yes | Projects: {len(report["projects"])} | Resources: {sum(totals)} | Errors: 0')
-            print('Report created with private permissions; temporary demo files removed on exit.')
+            for command in (
+                ['render', str(Path(folder) / 'before.json'), '--output', str(Path(folder) / 'report.md')],
+                ['diff', str(Path(folder) / 'before.json'), str(Path(folder) / 'after.json'),
+                 '--output', str(Path(folder) / 'changes.md')],
+            ):
+                run = subprocess.run([sys.executable, str(ROOT / 'scripts/reports.py'), *command],
+                                     env=env, capture_output=True, text=True, timeout=10)
+                if run.returncode:
+                    print('Local report demonstration failed.', file=sys.stderr)
+                    return 2
+            changes = (Path(folder) / 'changes.md').read_text(encoding='utf-8')
+            if not all(f'**{action}:** 1' in changes for action in ('Added', 'Removed', 'Modified')):
+                print('Unexpected local comparison result.', file=sys.stderr)
+                return 2
+            print('Second scan: 1 added, 1 removed, 1 modified resource. No uncomparable scopes.')
+            print('Markdown inventory and change reports generated offline with private permissions.')
+            if args.output_dir:
+                destination = Path(args.output_dir)
+                destination.mkdir(mode=0o700)
+                for name in ('before.json', 'after.json', 'report.md', 'changes.md'):
+                    reports.write_private(destination / name, (Path(folder) / name).read_text(encoding='utf-8'))
+                print(f'Synthetic example files retained in: {destination.resolve()}')
+            else:
+                print('Temporary demo files removed on exit. Use --output-dir NEW_DIRECTORY to retain them.')
             print('This verifies the local workflow, not live Aruba access or compatibility.')
             return 0
         finally:

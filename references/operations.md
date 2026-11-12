@@ -44,6 +44,8 @@ Altri comandi: snapshot e backup di volumi, subnet e security group, Elastic IP 
 
 L'helper inventaria progetti e sette famiglie: server, volumi, VPC, Elastic IP, DBaaS, Kubernetes e container registry. Non comprende snapshot, regole di rete, backup, audit, metriche o fatturazione. Una famiglia negata o non disponibile è un errore esplicito, non uno zero verificato.
 
+Per report Markdown e confronto tra inventari salvati usa `scripts/reports.py` e leggi [reports.md](reports.md). Questi comandi sono offline. Le nuove scansioni registrano l'ambito nel formato 2; `--account-label ETICHETTA` associa una dicitura dell'operatore all'account già identificato, senza verificarne l'identità. I formati precedenti restano leggibili come riepiloghi.
+
 Per VPS o Cloud PRO/Smart delle piattaforme precedenti non presumere visibilità con la nuova CMP. Verifica progetto e ID nel pannello. Inventario CMP vuoto non dimostra che non esistano altre risorse Aruba. Non migrare server o sostituire API precedenti automaticamente.
 
 Per aggiornare controlla https://github.com/Arubacloud/acloud-cli/releases e https://github.com/Arubacloud/sdk-go/releases; verifica checksum e compatibilità, ripeti i test dell'helper e aggiorna la provenienza. Evita aggiornamenti silenziosi durante un'operazione cloud.

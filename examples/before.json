@@ -1,0 +1,400 @@
+{
+  "schema_version": 2,
+  "started_at": "2026-11-12T03:12:09.612174+00:00",
+  "source": "Aruba CMP via acloud 1.0.0",
+  "profile": "(CLI active/default)",
+  "credential_env_override": true,
+  "selected_kinds": [
+    "servers",
+    "volumes",
+    "vpcs",
+    "ips",
+    "dbaas",
+    "kaas",
+    "registries"
+  ],
+  "scope": {
+    "account_label": "synthetic-demo",
+    "project_id": null,
+    "endpoint_fingerprint": "829da6a03d008308ee2a591b3cd6d341bf81edd07da59fc1af71ab0d839f8c9a"
+  },
+  "complete": true,
+  "projects": [
+    {
+      "project": {
+        "metadata": {
+          "id": "demo-production",
+          "name": "Production (demo)"
+        },
+        "properties": {
+          "default": false
+        }
+      },
+      "resources": {
+        "servers": {
+          "complete": true,
+          "count": 3,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-production-servers-1",
+                "name": "demo-servers-1"
+              },
+              "properties": {
+                "dataCenter": "",
+                "vpc": {
+                  "uri": ""
+                },
+                "flavor": {
+                  "id": "",
+                  "name": "",
+                  "category": "",
+                  "cpu": 0,
+                  "ram": 0,
+                  "hd": 0
+                },
+                "template": {
+                  "uri": ""
+                },
+                "bootVolume": {
+                  "uri": ""
+                },
+                "keyPair": {
+                  "uri": ""
+                }
+              },
+              "status": {}
+            },
+            {
+              "metadata": {
+                "id": "demo-production-servers-2",
+                "name": "demo-servers-2"
+              },
+              "properties": {
+                "dataCenter": "",
+                "vpc": {
+                  "uri": ""
+                },
+                "flavor": {
+                  "id": "",
+                  "name": "",
+                  "category": "",
+                  "cpu": 0,
+                  "ram": 0,
+                  "hd": 0
+                },
+                "template": {
+                  "uri": ""
+                },
+                "bootVolume": {
+                  "uri": ""
+                },
+                "keyPair": {
+                  "uri": ""
+                }
+              },
+              "status": {}
+            },
+            {
+              "metadata": {
+                "id": "demo-production-servers-3",
+                "name": "demo-servers-3"
+              },
+              "properties": {
+                "dataCenter": "",
+                "vpc": {
+                  "uri": ""
+                },
+                "flavor": {
+                  "id": "",
+                  "name": "",
+                  "category": "",
+                  "cpu": 0,
+                  "ram": 0,
+                  "hd": 0
+                },
+                "template": {
+                  "uri": ""
+                },
+                "bootVolume": {
+                  "uri": ""
+                },
+                "keyPair": {
+                  "uri": ""
+                }
+              },
+              "status": {}
+            }
+          ]
+        },
+        "volumes": {
+          "complete": true,
+          "count": 4,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-production-volumes-1",
+                "name": "demo-volumes-1"
+              },
+              "properties": {
+                "sizeGb": 0,
+                "dataCenter": "",
+                "type": ""
+              },
+              "status": {}
+            },
+            {
+              "metadata": {
+                "id": "demo-production-volumes-2",
+                "name": "demo-volumes-2"
+              },
+              "properties": {
+                "sizeGb": 0,
+                "dataCenter": "",
+                "type": ""
+              },
+              "status": {}
+            },
+            {
+              "metadata": {
+                "id": "demo-production-volumes-3",
+                "name": "demo-volumes-3"
+              },
+              "properties": {
+                "sizeGb": 0,
+                "dataCenter": "",
+                "type": ""
+              },
+              "status": {}
+            },
+            {
+              "metadata": {
+                "id": "demo-production-volumes-4",
+                "name": "demo-volumes-4"
+              },
+              "properties": {
+                "sizeGb": 0,
+                "dataCenter": "",
+                "type": ""
+              },
+              "status": {}
+            }
+          ]
+        },
+        "vpcs": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-production-vpcs-1",
+                "name": "demo-vpcs-1"
+              },
+              "properties": {},
+              "status": {}
+            }
+          ]
+        },
+        "ips": {
+          "complete": true,
+          "count": 2,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-production-ips-1",
+                "name": "demo-ips-1"
+              },
+              "properties": {},
+              "status": {}
+            },
+            {
+              "metadata": {
+                "id": "demo-production-ips-2",
+                "name": "demo-ips-2"
+              },
+              "properties": {},
+              "status": {}
+            }
+          ]
+        },
+        "dbaas": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-production-dbaas-1",
+                "name": "demo-dbaas-1"
+              },
+              "properties": {},
+              "status": {}
+            }
+          ]
+        },
+        "kaas": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-production-kaas-1",
+                "name": "demo-kaas-1"
+              },
+              "properties": {
+                "preset": false,
+                "vpc": {},
+                "subnet": {},
+                "kubernetesVersion": {},
+                "nodecidr": {},
+                "securityGroup": {}
+              },
+              "status": {}
+            }
+          ]
+        },
+        "registries": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-production-registries-1",
+                "name": "demo-registries-1"
+              },
+              "properties": {
+                "publicIp": {
+                  "uri": ""
+                },
+                "vpc": {
+                  "uri": ""
+                },
+                "subnet": {
+                  "uri": ""
+                },
+                "securityGroup": {
+                  "uri": ""
+                },
+                "blockStorage": {
+                  "uri": ""
+                }
+              },
+              "status": {}
+            }
+          ]
+        }
+      }
+    },
+    {
+      "project": {
+        "metadata": {
+          "id": "demo-staging",
+          "name": "Staging (demo)"
+        },
+        "properties": {
+          "default": false
+        }
+      },
+      "resources": {
+        "servers": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-staging-servers-1",
+                "name": "demo-servers-1"
+              },
+              "properties": {
+                "dataCenter": "",
+                "vpc": {
+                  "uri": ""
+                },
+                "flavor": {
+                  "id": "",
+                  "name": "",
+                  "category": "",
+                  "cpu": 0,
+                  "ram": 0,
+                  "hd": 0
+                },
+                "template": {
+                  "uri": ""
+                },
+                "bootVolume": {
+                  "uri": ""
+                },
+                "keyPair": {
+                  "uri": ""
+                }
+              },
+              "status": {}
+            }
+          ]
+        },
+        "volumes": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-staging-volumes-1",
+                "name": "demo-volumes-1"
+              },
+              "properties": {
+                "sizeGb": 0,
+                "dataCenter": "",
+                "type": ""
+              },
+              "status": {}
+            }
+          ]
+        },
+        "vpcs": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-staging-vpcs-1",
+                "name": "demo-vpcs-1"
+              },
+              "properties": {},
+              "status": {}
+            }
+          ]
+        },
+        "ips": {
+          "complete": true,
+          "count": 1,
+          "items": [
+            {
+              "metadata": {
+                "id": "demo-staging-ips-1",
+                "name": "demo-ips-1"
+              },
+              "properties": {},
+              "status": {}
+            }
+          ]
+        },
+        "dbaas": {
+          "complete": true,
+          "count": 0,
+          "items": []
+        },
+        "kaas": {
+          "complete": true,
+          "count": 0,
+          "items": []
+        },
+        "registries": {
+          "complete": true,
+          "count": 0,
+          "items": []
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "finished_at": "2026-11-12T03:12:09.741133+00:00"
+}

@@ -1,51 +1,42 @@
 # Aruba Cloud for Codex
 
-**Your Aruba Cloud infrastructure, one conversation away.**
+**Know what's in your Aruba Cloud. Ask Codex.**
 
-Inventory your projects, inspect resources, and carry out guided operations from Codex using Aruba's official [`acloud` CLI](https://github.com/Arubacloud/acloud-cli). Start with a read-only inventory; use the official [Go SDK](https://github.com/Arubacloud/sdk-go) when you need an application integration.
+Inventory your projects, turn the results into a readable report, and see what changed between scans. Use Aruba's official [`acloud` CLI](https://github.com/Arubacloud/acloud-cli) for collection and guided operations; process saved inventories entirely offline.
 
 [![CLI fixture tests](https://github.com/viames/aruba-cloud-skill/actions/workflows/ci.yml/badge.svg)](https://github.com/viames/aruba-cloud-skill/actions)
+[![Latest release](https://img.shields.io/github/v/release/viames/aruba-cloud-skill)](https://github.com/viames/aruba-cloud-skill/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](#get-started)
-
-[Get started](#get-started) · [Try the local demo](#try-it-without-an-aruba-account) · [See coverage](#what-you-can-do) · [Read the operating guide](references/operations.md)
-
-Community-built and independent of Aruba. This is not an official Aruba product; the CLI and SDK it uses are official Aruba projects.
-
-## Ask Codex
-
-After installation and account setup, try a request like:
 
 ```text
-$aruba-cloud Inventory my projects and group servers, volumes, and IPs
-by project. Point out any resources you could not read.
+$aruba-cloud What changed between these two inventories?
+Show additions, removals, modifications, and anything you could not compare.
 ```
 
-```text
-$aruba-cloud Check my local setup and tell me what is missing
-before I run my first inventory.
+[![Example output from real local fixture scans: one resource added, one removed, one modified, and no uncomparable scopes.](assets/changes-preview.png)](examples/changes.md)
+
+**Example prompt; generated report preview.** Two real helper/CLI runs against synthetic localhost data produced this result. [Read the change report](examples/changes.md) · [Read the inventory report](examples/report.md) · [Watch the local CLI playback](assets/local-demo.gif)
+
+[Get started](#get-started) · [Try the offline examples](#try-it-before-connecting-an-account) · [Coverage](#coverage) · [FAQ](#faq)
+
+Independent community project, not an official Aruba product. The CLI and [Go SDK](https://github.com/Arubacloud/sdk-go) are official Aruba projects.
+
+## Try it before connecting an account
+
+After cloning this repository, you can generate reports from the included synthetic examples with **Python 3.10+ alone**. These commands need no CLI binary, credentials, or network access:
+
+```sh
+python3 scripts/reports.py render examples/before.json --output ./example-report.md
+python3 scripts/reports.py diff examples/before.json examples/after.json --output ./example-changes.md
 ```
 
-```text
-$aruba-cloud Inspect server SERVER_ID in project PROJECT_ID
-and identify what to check before changing it.
-```
-
-Use these prompts in your preferred language. Skill operating instructions are in Italian; CLI commands and reports are independent of the conversation language.
-
-## See the inventory workflow
-
-[![Local CLI demo using synthetic data: two projects, seventeen resources across seven resource families, complete inventory and zero errors.](assets/local-demo.png)](assets/local-demo.gif)
-
-[Watch the 22-second walkthrough](assets/local-demo.gif) · [Read the output as text](examples/demo-output.txt)
-
-The animation presents output from the reproducible local demo below. It uses the real inventory helper and official CLI against a localhost fixture, with synthetic credentials and resources. It does not show a live Aruba account or a Codex conversation.
+Choose new output filenames. Open the Markdown files in your editor to see per-project counts, completeness, and changes. [Report and comparison guide](references/reports.md).
 
 ## Get started
 
-You need **Codex, Git, Python 3.10+, and macOS or Linux** on arm64 or amd64. No Go installation or third-party Python packages are required. The initial CLI download needs network access to GitHub.
+For live collection you need **Codex, Git, Python 3.10+, and macOS or Linux** on arm64/amd64. No Go installation or third-party Python packages are required. The initial CLI download needs GitHub access.
 
-### 1. Install the skill
+### 1. Install
 
 ```sh
 git clone https://github.com/viames/aruba-cloud-skill.git "$HOME/.codex/skills/aruba-cloud"
@@ -53,132 +44,108 @@ python3 "$HOME/.codex/skills/aruba-cloud/scripts/install_cli.py"
 python3 "$HOME/.codex/skills/aruba-cloud/scripts/inventory.py" doctor
 ```
 
-For a custom `CODEX_HOME`, use its `skills/aruba-cloud` directory instead. Review local changes before replacing an existing installation. The skill will be available on your next Codex turn: invoke `$aruba-cloud` or ask to manage Aruba Cloud.
+For a custom `CODEX_HOME`, use its `skills/aruba-cloud` directory. Review local changes before replacing an existing installation. Invoke `$aruba-cloud` on your next Codex turn. `doctor` checks the local binary and configuration presence; it does not authenticate or call Aruba.
 
-`doctor` verifies the local binary and reports configuration presence. It does **not** authenticate or call Aruba APIs.
-
-### 2. Connect your account
+### 2. Connect
 
 Create a client credential in [Aruba CMP](https://my.arubacloud.com): **UTILITIES → Developer Tools → Client Credentials → Create Client Credential**. [The secret is displayed only when created](https://kb.arubacloud.com/en/utilities/api/client-credentials/creating.aspx).
 
-Run this in an interactive terminal, replacing `YOUR_CLIENT_ID`:
+In an interactive terminal, replacing `YOUR_CLIENT_ID`:
 
 ```sh
 "$HOME/.codex/skills/aruba-cloud/bin/acloud" config profile set personal --client-id YOUR_CLIENT_ID
 ```
 
-Enter the secret at the hidden prompt. Keep it out of chat, command-line flags, and source control. See [credential storage and profile selection](#credentials-and-profiles) before using multiple accounts.
+Enter the secret at the hidden prompt. Keep it out of chat and command-line flags. Environment credentials override saved profiles, even with `--profile`; see [credential storage and account selection](references/operations.md#credenziali).
 
-### 3. Run your first inventory
+### 3. Collect and report
 
-Ask Codex using an example above, or run the helper directly:
-
-```sh
-python3 "$HOME/.codex/skills/aruba-cloud/scripts/inventory.py" inventory \
-  --profile personal \
-  --output ./inventory.json
-```
-
-The helper creates a private JSON report and prints its path, completeness, project count, and error count. Choose a new output filename for each run. A complete scan exits with `0`; a partial scan exits with `2` and explains the affected scopes with diagnostic codes. A failed collection is **unknown**, not a verified zero.
-
-## Try it without an Aruba account
-
-Once the CLI is installed, run this from the repository or skill directory:
+Run from the installed skill directory, or ask Codex:
 
 ```sh
-python3 scripts/demo.py
+python3 scripts/inventory.py inventory --profile personal \
+  --account-label my-account --output ./before.json
+python3 scripts/reports.py render ./before.json --output ./report.md
 ```
 
-The demo runs the real inventory helper and CLI against a temporary server bound to `127.0.0.1`. It replaces inherited Aruba credentials and endpoints in the child process, uses temporary configuration, and removes its report on exit. Your saved account configuration is not changed. After the initial CLI download, the demo needs no internet connection.
+Use a stable, non-secret label for the intended account. The label is supplied by you; it does not authenticate account identity. You can restrict collection with `--project-id PROJECT_ID` and `--kinds servers,volumes,vpcs`.
 
-Expected result: **2 demonstration projects, 17 resources, 7 resource families, and 0 errors**. This verifies the local workflow, not live Aruba access or production compatibility.
+Later, collect a second inventory for the same account and scope:
 
-## What you can do
+```sh
+python3 scripts/inventory.py inventory --profile personal \
+  --account-label my-account --output ./after.json
+python3 scripts/reports.py diff ./before.json ./after.json --output ./changes.md
+```
 
-| Task | Available today | How it works |
-| --- | --- | --- |
-| Inventory projects and resources | Automated helper | Paginated collection with per-family completeness and errors |
-| Inspect an individual resource | Guided CLI use | Codex checks the installed command help and selects the account, project, and resource |
-| Create, change, or remove resources | Guided CLI use, where supported | Requires the user's authorization for the operation; Codex checks the resulting state |
-| Build an application integration | SDK guidance | Uses APIs from the relevant official Go SDK version |
-| Check local installation | Offline `doctor` command | Verifies binary integrity and configuration presence without authentication |
-| Explore without an account | Local demo | Real CLI and helper, synthetic localhost API |
+An inaccessible family is **unknown**, never a verified zero or an automatic removal. Compatible completed scopes are compared by resource ID. Missing projects are visibility changes; absence does not prove deletion. [Comparison rules and diagnostic codes](references/reports.md).
 
-### Inventory coverage
+## Ask Codex
 
-| Resource | `--kinds` value |
+```text
+$aruba-cloud Inventory my projects and write a Markdown report.
+Separate verified counts from resources you could not read.
+```
+
+```text
+$aruba-cloud Compare before.json and after.json, and explain what changed.
+```
+
+```text
+$aruba-cloud Inspect server SERVER_ID in project PROJECT_ID
+and identify what to check before changing it.
+```
+
+Use your preferred language. Operating instructions are in Italian; CLI commands and report tools work independently of the conversation language.
+
+## Coverage
+
+| Capability | Available today |
 | --- | --- |
-| Cloud servers | `servers` |
-| Block storage | `volumes` |
-| Virtual private clouds | `vpcs` |
-| Elastic IPs | `ips` |
-| Managed databases | `dbaas` |
-| Managed Kubernetes | `kaas` |
-| Container registries | `registries` |
+| Inventory | Projects, servers, block storage, VPCs, Elastic IPs, managed databases, Kubernetes and registries |
+| Markdown report | Offline per-project/family counts, completeness and diagnostics |
+| Inventory comparison | Offline additions, removals, modifications and uncomparable scopes |
+| Resource inspection and changes | Guided official CLI use, where supported and authorized |
+| Application integration | Guidance for the official Go SDK |
+| Account-free demo | Real CLI/helper against synthetic localhost data, followed by offline reporting |
 
-To restrict the project and resource families:
+Inventory `--kinds`: `servers`, `volumes`, `vpcs`, `ips`, `dbaas`, `kaas`, `registries`. Coverage is limited to **Aruba Cloud CMP** and selected families; it excludes billing, metrics, backup/snapshot inventory and some network objects. A scan is not atomic. The [operating guide](references/operations.md) covers scope and compatibility.
 
-```sh
-python3 "$HOME/.codex/skills/aruba-cloud/scripts/inventory.py" inventory \
-  --profile personal --project-id PROJECT_ID \
-  --kinds servers,volumes,vpcs --output ./inventory-project.json
-```
+## FAQ
 
-Coverage applies to **Aruba Cloud CMP** and the selected families. It does not include billing, metrics, backup/snapshot inventory, all network objects, or every Aruba service. Legacy VPS and Cloud PRO/Smart products need a separate compatibility check. An empty CMP inventory does not prove that other Aruba resources do not exist. This skill does not target HPE Aruba Networking.
+**Does this support older Aruba VPS or Cloud PRO/Smart?**
 
-## Designed for careful cloud operations
+Do a separate compatibility check. An empty CMP inventory does not establish that older-platform resources do not exist. HPE Aruba Networking is outside this skill's scope.
 
-- **Read-only inventory:** the helper lists resources; cloud changes use separate CLI operations within the user's authorized scope.
-- **Explicit account and project:** operating instructions account for profile selection and environment overrides.
-- **Honest completeness:** repeated pages, changing totals, permission errors, and incomplete collections are reported rather than silently treated as empty results. A scan is not an atomic snapshot.
-- **Private reports:** new JSON files use mode `0600`; existing files are never overwritten. Reports contain infrastructure metadata and should stay private.
-- **Pinned tooling:** the installer verifies the official CLI archive against a committed SHA-256 manifest and does not silently upgrade it.
+**What does it add to the official CLI?**
 
-### Credentials and profiles
+Reusable Codex operating instructions, a paginated inventory helper, deterministic Markdown reports, and scope-aware inventory comparisons. The CLI remains the source of cloud operations.
 
-<details>
-<summary><strong>Storage, environment overrides, and authorization</strong></summary>
+**Do I need credentials to try it?**
 
-The CLI stores configuration in `$XDG_CONFIG_HOME/acloud/config.yaml`, defaulting to `~/.config/acloud/config.yaml`, with restricted permissions. The secret is plaintext in that file, not in a secret vault. A secret manager can instead inject `ACLOUD_CLIENT_ID` and `ACLOUD_CLIENT_SECRET` into the process environment.
+The committed JSON examples can be rendered and compared offline with Python alone. After installing the CLI, `python3 scripts/demo.py` runs two real helper scans against a synthetic local API. Add `--output-dir NEW_DIRECTORY` to retain the demonstration JSON and Markdown files.
 
-Environment credentials override file profiles, **even with `--profile`**. Check for unexpected overrides when switching accounts. `doctor` reports variable names and configuration presence only; it neither reveals values nor tests authentication.
+**Can it change my infrastructure?**
 
-Never enable CLI `--debug` with real credentials in shared logs: it may expose authentication headers.
+The inventory/report tools collect or process data. Guided CLI operations can change resources within the user's authorization and existing restrictions, with resulting-state checks. Installation alone grants no authorization for changes.
 
-Installing the skill does not itself authorize resource creation, deletion, power changes, or network changes. Existing per-resource restrictions still apply, and an already authorized operation does not need repeated approval.
+**What about privacy and failures?**
 
-</details>
+New report files use mode `0600` and existing files are never overwritten. Reports contain infrastructure metadata: keep them private. Incomplete reports/comparisons exit with `2`; incompatible or invalid inputs produce a diagnostic and no new Markdown file. See [exit codes](references/reports.md#exit-codes-and-output-files). Never use CLI `--debug` with real credentials in shared logs.
 
-<details>
-<summary><strong>Report semantics and CLI provenance</strong></summary>
-
-Check both the helper's exit code and the JSON report's `complete` field. A failed family has `count: null` and `items: null`, rather than zero. Error details are reduced to local diagnostic codes to keep response bodies out of reports.
-
-The installer downloads **acloud 1.0.0** from the official GitHub release and checks a SHA-256 pinned in [`references/provenance.json`](references/provenance.json). Downloaded binaries and installation receipts stay in ignored `bin/`. No shell profile, global executable path, or MCP configuration is changed. A checksum verifies the selected release bytes; it is not an independent publisher signature.
-
-The installer supports macOS and Linux on arm64 and amd64. Initial integration tests were run on macOS arm64; the CI matrix runs the fixture suite on macOS and Ubuntu runners. This is not evidence of live compatibility on every platform or account.
-
-</details>
-
-## Development and maintenance
+## Development
 
 ```sh
 python3 scripts/install_cli.py
 python3 scripts/test_inventory.py
+python3 scripts/test_reports.py
 python3 scripts/demo.py
 ```
 
-Tests run the actual official CLI against a local HTTP/OAuth fixture with fake credentials. They cover pagination across projects, empty results across all seven families, permission failures, repeated pages, and output overwrite protection. Neither the tests nor the demo contact Aruba or create cloud resources. Passing them does not establish authenticated account access or production compatibility.
+Tests use the actual pinned CLI against local fixtures, plus offline report/comparison cases. CI runs on macOS and Ubuntu. Fixtures do not contact Aruba or establish live production compatibility. The installer supports macOS/Linux arm64/amd64 and verifies the official archive against [pinned SHA-256 checksums](references/provenance.json). Downloaded binaries stay in ignored `bin/`; there are no global PATH or MCP changes. A checksum is not an independent publisher signature.
 
-- [`SKILL.md`](SKILL.md): Codex operating instructions.
-- [`agents/openai.yaml`](agents/openai.yaml): skill name, description, and starting prompt shown in Codex.
-- [`references/operations.md`](references/operations.md): authentication, CLI operations, and scope.
-- [`references/sdk.md`](references/sdk.md): direct Go SDK integration.
-- [`references/provenance.json`](references/provenance.json): pinned release and archive checksums.
-- [`scripts/demo.py`](scripts/demo.py): reproducible local demonstration.
-
-Review upstream release notes and CLI/SDK compatibility before updating the pinned version, then re-run the fixture tests and demo. For an issue, include your OS/architecture, CLI version, exit code, and diagnostic code; remove credentials and private infrastructure identifiers.
+See [SKILL.md](SKILL.md), [CLI operations](references/operations.md), [reports and comparisons](references/reports.md), and [SDK guidance](references/sdk.md). Review upstream compatibility and rerun tests before updating the pinned CLI; it is not silently upgraded. For an issue, include OS/architecture, CLI version and diagnostic code, with credentials and private identifiers removed.
 
 ## License
 
-Skill instructions and helper code: [MIT](LICENSE), copyright 2026 Viames Marino. Downloaded `acloud` and its SDK dependencies retain their upstream licenses; see [third-party notices](THIRD_PARTY_NOTICES.md).
+Instructions and helper code: [MIT](LICENSE), copyright 2026 Viames Marino. Downloaded CLI/SDK components retain their upstream licenses; see [third-party notices](THIRD_PARTY_NOTICES.md).
