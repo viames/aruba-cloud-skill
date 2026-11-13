@@ -1,3 +1,5 @@
+![Aruba Cloud — See your resources. Understand the changes.](https://raw.githubusercontent.com/viames/aruba-cloud-skill/main/.github/assets/cover.jpg)
+
 # Aruba Cloud for Codex
 
 **Know what's in your Aruba Cloud. Ask Codex.**
