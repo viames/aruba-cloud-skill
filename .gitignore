@@ -8,3 +8,4 @@ config.yaml
 inventory*.json
 .venv/
 .DS_Store
+/artifacts/

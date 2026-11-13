@@ -23,3 +23,5 @@ jobs:
         run: python3 scripts/demo.py
       - name: Test offline reports and comparisons
         run: python3 scripts/test_reports.py
+      - name: Verify plugin and marketplace packaging
+        run: python3 scripts/package_plugin.py

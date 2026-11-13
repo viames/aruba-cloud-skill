@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "aruba-cloud",
+  "version": "0.2.1",
+  "description": "Independent community utilities for Aruba Cloud CMP inventories, Markdown reports and offline comparisons, using the official Aruba CLI.",
+  "author": {"name": "Viames Marino", "url": "https://github.com/viames"},
+  "homepage": "https://github.com/viames/aruba-cloud-skill",
+  "repository": "https://github.com/viames/aruba-cloud-skill",
+  "license": "MIT",
+  "keywords": ["aruba-cloud", "cloud-infrastructure", "codex", "inventory", "devops"],
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "Aruba Cloud Toolkit",
+        "shortDescription": "Inventory Aruba Cloud CMP and compare saved scans",
+        "longDescription": "Independent community toolkit for Aruba Cloud CMP. Inventory supported resources using the official Aruba CLI, generate Markdown reports and compare saved scans offline. Unreadable scopes remain distinct from verified changes. Live collection requires local Python and the checksum-pinned CLI; offline reports need Python alone. Not an official Aruba product.",
+        "developerName": "Viames Marino",
+        "category": "Coding",
+        "capabilities": ["Read", "Write"],
+        "websiteURL": "https://github.com/viames/aruba-cloud-skill",
+        "supportURL": "https://github.com/viames/aruba-cloud-skill/issues",
+        "defaultPrompt": "Inventory my Aruba Cloud CMP resources and write a Markdown report with verified counts and any unreadable scopes.",
+        "brandColor": "#28486B",
+        "composerIcon": "./assets/cloud.svg",
+        "logo": "./assets/cloud.svg",
+        "screenshots": ["./assets/changes-preview.png"]
+      }
+    }
+  }
+}

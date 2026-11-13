@@ -62,6 +62,25 @@ The first command was verified in an isolated project; it does not connect an
 Aruba account. The [Skills CLI](https://github.com/vercel-labs/skills) is an
 optional installer with its own requirements and telemetry controls.
 
+### Optional: install the packaged Codex plugin
+
+The [0.2.1 release](https://github.com/viames/aruba-cloud-skill/releases/tag/v0.2.1)
+also provides a standalone plugin ZIP and a marketplace ZIP with SHA-256 checksums.
+The archives package the same canonical skill, helpers and synthetic examples;
+they contain no credentials or downloaded Aruba CLI binary.
+
+Extract `aruba-cloud-0.2.1-marketplace.zip` into a permanent directory, then run:
+
+```sh
+codex plugin marketplace add /absolute/path/to/extracted/marketplace
+codex plugin add aruba-cloud@viames-aruba-cloud
+```
+
+Start a new local Codex chat. The plugin's skill resolves paths from its own
+directory; run its CLI installer before live collection. Existing skill-only
+installation methods remain valid. Plugin packaging is separate from public
+directory review and does not claim OpenAI approval.
+
 ### 2. Connect
 
 Create a client credential in [Aruba CMP](https://my.arubacloud.com): **UTILITIES → Developer Tools → Client Credentials → Create Client Credential**. [The secret is displayed only when created](https://kb.arubacloud.com/en/utilities/api/client-credentials/creating.aspx).
