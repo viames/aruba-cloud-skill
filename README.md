@@ -46,6 +46,22 @@ python3 "$HOME/.codex/skills/aruba-cloud/scripts/inventory.py" doctor
 
 For a custom `CODEX_HOME`, use its `skills/aruba-cloud` directory. Review local changes before replacing an existing installation. Invoke `$aruba-cloud` on your next Codex turn. `doctor` checks the local binary and configuration presence; it does not authenticate or call Aruba.
 
+#### Install in one project with the Skills CLI
+
+With Node.js 22.20 or later, run this from your project directory:
+
+```sh
+npx skills add viames/aruba-cloud-skill --skill aruba-cloud --agent codex
+python3 .agents/skills/aruba-cloud/scripts/install_cli.py
+python3 .agents/skills/aruba-cloud/scripts/inventory.py doctor
+```
+
+This installs a project-local copy under `.agents/skills/aruba-cloud`. Use that
+directory in place of `$HOME/.codex/skills/aruba-cloud` in the examples below.
+The first command was verified in an isolated project; it does not connect an
+Aruba account. The [Skills CLI](https://github.com/vercel-labs/skills) is an
+optional installer with its own requirements and telemetry controls.
+
 ### 2. Connect
 
 Create a client credential in [Aruba CMP](https://my.arubacloud.com): **UTILITIES → Developer Tools → Client Credentials → Create Client Credential**. [The secret is displayed only when created](https://kb.arubacloud.com/en/utilities/api/client-credentials/creating.aspx).
