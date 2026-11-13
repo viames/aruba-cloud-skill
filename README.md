@@ -19,7 +19,7 @@ Show additions, removals, modifications, and anything you could not compare.
 
 **Example prompt; generated report preview.** Two real helper/CLI runs against synthetic localhost data produced this result. [Read the change report](examples/changes.md) · [Read the inventory report](examples/report.md) · [Watch the local CLI playback](assets/local-demo.gif)
 
-[Get started](#get-started) · [Try the offline examples](#try-it-before-connecting-an-account) · [Coverage](#coverage) · [FAQ](#faq)
+[skills.sh](https://skills.sh/viames/aruba-cloud-skill/aruba-cloud) · [Get started](#get-started) · [Try the offline examples](#try-it-before-connecting-an-account) · [Coverage](#coverage) · [FAQ](#faq)
 
 Independent community project, not an official Aruba product. The CLI and [Go SDK](https://github.com/Arubacloud/sdk-go) are official Aruba projects.
 
@@ -49,6 +49,8 @@ python3 "$HOME/.codex/skills/aruba-cloud/scripts/inventory.py" doctor
 For a custom `CODEX_HOME`, use its `skills/aruba-cloud` directory. Review local changes before replacing an existing installation. Invoke `$aruba-cloud` on your next Codex turn. `doctor` checks the local binary and configuration presence; it does not authenticate or call Aruba.
 
 #### Install in one project with the Skills CLI
+
+Find the [Aruba Cloud skill on skills.sh](https://skills.sh/viames/aruba-cloud-skill/aruba-cloud), with its source and installation instructions.
 
 With Node.js 22.20 or later, run this from your project directory:
 
